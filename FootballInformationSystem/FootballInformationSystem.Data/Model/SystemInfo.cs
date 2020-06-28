@@ -2,7 +2,7 @@
 
 namespace FootballInformationSystem.Data.Model
 {
-    public abstract class SystemInfo
+    public abstract class SystemInfo : IDeletable, IAuditable
     {
         public bool IsDeleted { get; set; }
 
