@@ -8,6 +8,8 @@ namespace FootballInformationSystem.Data.Services
     public interface IMapper
     {
         Dbo.City Map(Dto.City city);
+
+        Dbo.Country Map(Dto.Country country);
     }
 
     public class Mapper : IMapper

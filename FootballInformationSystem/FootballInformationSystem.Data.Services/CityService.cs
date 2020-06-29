@@ -8,7 +8,16 @@ using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
-    public class CityService
+    public interface ICityService
+    {
+        Task<Dbo.City> GetByName(string name);
+
+        Task<Dbo.City> GetById(long id);
+
+        Task<Dbo.City> Create(Dto.City city);
+    }
+
+    public class CityService : ICityService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
