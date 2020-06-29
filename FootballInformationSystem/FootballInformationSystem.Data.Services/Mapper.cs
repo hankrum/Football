@@ -1,5 +1,7 @@
 ﻿using FootballInformationSystem.Infrastructure;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Dbo = FootballInformationSystem.Data.Model;
 using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
@@ -9,14 +11,27 @@ namespace FootballInformationSystem.Data.Services
     {
         Dbo.City Map(Dto.City city);
 
+        Dto.City Map(Dbo.City city);
+
         Dbo.Country Map(Dto.Country country);
+
+        Dto.Country Map(Dbo.Country country);
+        
+        Dto.Team Map(Dbo.Team team);
+
+        Dbo.Team Map(Dto.Team team);
+
+        IEnumerable<Dto.Team> Map(IList<Dbo.Team> teams);
     }
 
     public class Mapper : IMapper
     {
         public Dbo.City Map(Dto.City city)
         {
-            Validated.NotNull(city, nameof(city));
+            if (city == null)
+            {
+                return null;
+            }
 
             return new Dbo.City
             {
@@ -25,15 +40,98 @@ namespace FootballInformationSystem.Data.Services
             };
         }
 
+        public Dto.City Map(Dbo.City city)
+        {
+            if (city == null)
+            {
+                return null;
+            }
+
+            var result = new Dto.City
+            {
+                Id = city.Id,
+                Name = city.Name
+            };
+
+            return result;
+        }
+
         public Dbo.Country Map(Dto.Country country)
         {
-            Validated.NotNull(country, nameof(country));
+            if (country == null)
+            {
+                return null;
+            }
 
             return new Dbo.Country
             {
                 Id = country.Id,
                 Name = country.Name
             };
+        }
+
+        public Dto.Country Map(Dbo.Country country)
+        {
+            if (country == null)
+            {
+                return null;
+            }
+
+            return new Dto.Country
+            {
+                Id = country.Id,
+                Name = country.Name
+            };
+        }
+
+        public Dto.Team Map(Dbo.Team team)
+        {
+            if (team == null)
+            {
+                return null;
+            }
+
+            var result = new Dto.Team
+            {
+                Id = team.Id,
+                Name = team.Name,
+                City = Map(team.City),
+                Country = Map(team.Country)
+            };
+
+            return result;
+        }
+
+        public Dbo.Team Map(Dto.Team team)
+        {
+            if (team == null)
+            {
+                return null;
+            }
+
+            var result = new Dbo.Team
+            {
+                Id = team.Id,
+                Name = team.Name,
+                CityId = team.City.Id,
+                City = Map(team.City),
+                CountryId = team.Country.Id,
+                Country = Map(team.Country)
+            };
+
+            return result;
+        }
+
+        public IEnumerable<Dto.Team> Map(IList<Dbo.Team> teams)
+        {
+            if (teams == null)
+            {
+                return null;
+            }
+
+            var result = teams.Select(team => Map(team));
+
+            return result;
         }
     }
 }

@@ -11,6 +11,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballInformationSystem.Data.Services
 {
+    public interface ICountryService
+    {
+        Task<Dbo.Country> GetByName(string name);
+
+        Task<Dbo.Country> GetById(long id);
+
+        Task<Dbo.Country> Create(Dto.Country country);
+    }
+
     public class CountryService
     {
         private readonly IUnitOfWork unitOfWork;
