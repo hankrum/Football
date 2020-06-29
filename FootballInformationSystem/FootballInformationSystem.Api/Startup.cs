@@ -33,7 +33,7 @@ namespace FootballInformationSystem.Api
         {
             services.AddDbContext<MsSqlDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("FootballContext"),
-                b => b.MigrationsAssembly("Api.Host")));
+                b => b.MigrationsAssembly("FootballInformationSystem.Api")));
 
             services.BuildServiceProvider().GetService<MsSqlDbContext>().Database.Migrate();
 

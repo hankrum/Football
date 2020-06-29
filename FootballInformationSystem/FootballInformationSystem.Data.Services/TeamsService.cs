@@ -2,6 +2,7 @@
 using FootballInformationSystem.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dbo = FootballInformationSystem.Data.Model;
 using Dto = FootballInformationSystem.Data.Services.DtoModels;
@@ -13,6 +14,8 @@ namespace FootballInformationSystem.Data.Services
         Task<IEnumerable<Dto.Team>> All();
 
         Task<Dto.Team> Create(Dto.Team team);
+
+        Task<Dbo.Team> GetByName(string name);
     }
 
     public class TeamsService : ITeamsService
@@ -44,6 +47,13 @@ namespace FootballInformationSystem.Data.Services
             return result;
         }
 
+        public async Task<Dbo.Team> GetByName(string name)
+        {
+            var result = await this.unitOfWork.Teams.All().Where(c => c.Name == name).ToListAsync();
+
+            return result.FirstOrDefault();
+        }
+
         public async Task<Dto.Team> Create(Dto.Team team)
         {
             Validated.NotNull(team, nameof(team));
@@ -71,6 +81,35 @@ namespace FootballInformationSystem.Data.Services
             await this.unitOfWork.SaveChanges();
 
             return mapper.Map(addedTeam);
+        }
+
+        public async Task<Dto.Team> Update(Dto.Team team)
+        {
+            Validated.NotNull(team, nameof(team));
+
+            Dbo.City city = await this.cityService.GetByName(team.City.Name);
+
+            if (city == null)
+            {
+                city = await this.cityService.Create(team.City);
+            }
+
+            team.City.Id = city.Id;
+
+            Dbo.Country country = await this.countryService.GetByName(team.Country.Name);
+
+            if (country == null)
+            {
+                country = await this.countryService.Create(team.Country);
+            }
+
+            team.Country.Id = country.Id;
+
+            Dbo.Team updatedTeam = this.unitOfWork.Teams.Update(mapper.Map(team));
+
+            await this.unitOfWork.SaveChanges();
+
+            return mapper.Map(updatedTeam);
         }
     }
 }
