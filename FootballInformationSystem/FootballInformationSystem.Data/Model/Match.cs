@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FootballInformationSystem.Data.Model
 {
@@ -16,10 +17,11 @@ namespace FootballInformationSystem.Data.Model
         [Required]
         public virtual Team GuestTeam { get; set; }
 
-        [Required]
         public int HomeTeamGoals { get; set; }
 
-        [Required]
         public int GuestTeamGoals { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
     }
 }
