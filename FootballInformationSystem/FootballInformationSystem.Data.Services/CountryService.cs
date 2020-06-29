@@ -1,13 +1,10 @@
-﻿using Dbo = FootballInformationSystem.Data.Model;
-using Dto = FootballInformationSystem.Data.Services.DtoModels;
-using FootballInformationSystem.Data.UnitOfWork;
+﻿using FootballInformationSystem.Data.UnitOfWork;
 using FootballInformationSystem.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
+using Dbo = FootballInformationSystem.Data.Model;
+using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
@@ -20,7 +17,7 @@ namespace FootballInformationSystem.Data.Services
         Task<Dbo.Country> Create(Dto.Country country);
     }
 
-    public class CountryService
+    public class CountryService: ICountryService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;

@@ -1,16 +1,21 @@
-﻿using Dbo = FootballInformationSystem.Data.Model;
-using Dto = FootballInformationSystem.Data.Services.DtoModels;
-using FootballInformationSystem.Data.UnitOfWork;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using FootballInformationSystem.Data.UnitOfWork;
 using FootballInformationSystem.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Dbo = FootballInformationSystem.Data.Model;
+using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
-    public class TeamsService
+    public interface ITeamsService
+    {
+        Task<IEnumerable<Dto.Team>> All();
+
+        Task<Dto.Team> Create(Dto.Team team);
+    }
+
+    public class TeamsService : ITeamsService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICityService cityService;

@@ -1,6 +1,4 @@
-﻿using FootballInformationSystem.Infrastructure;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Dbo = FootballInformationSystem.Data.Model;
 using Dto = FootballInformationSystem.Data.Services.DtoModels;

@@ -6,6 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FootballInformationSystem.Data.Services\FootballInformationSystem.Data.Services.csproj" />
+    <ProjectReference Include="..\FootballInformationSystem.Data\FootballInformationSystem.Data.csproj" />
   </ItemGroup>
 
 

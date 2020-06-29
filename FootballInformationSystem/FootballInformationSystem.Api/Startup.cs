@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FootballInformationSystem.Data;
+using FootballInformationSystem.Data.Repository;
+using FootballInformationSystem.Data.Services;
+using FootballInformationSystem.Data.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace FootballInformationSystem.Api
 {
@@ -26,14 +24,40 @@ namespace FootballInformationSystem.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            this.RegisterData(services);
+            this.RegisterServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        private void RegisterData(IServiceCollection services)
+        {
+            services.AddDbContext<MsSqlDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("FootballContext"),
+                b => b.MigrationsAssembly("Api.Host")));
+
+            services.BuildServiceProvider().GetService<MsSqlDbContext>().Database.Migrate();
+
+            services.AddScoped(typeof(IEfRepository<>), typeof(EFRepository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
+        private void RegisterServices(IServiceCollection services)
+        {
+            services.AddTransient<ICityService, CityService>();
+            services.AddTransient<ICountryService, CountryService>();
+            services.AddTransient<ITeamsService, TeamsService>();
+            services.AddTransient<IMapper, Mapper>();
+        }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/error");
             }
 
             app.UseHttpsRedirection();
