@@ -1,13 +1,10 @@
-﻿using Dbo = FootballInformationSystem.Data.Model;
-using Dto = FootballInformationSystem.Data.Services.DtoModels;
-using FootballInformationSystem.Data.UnitOfWork;
+﻿using FootballInformationSystem.Data.UnitOfWork;
 using FootballInformationSystem.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Dbo = FootballInformationSystem.Data.Model;
+using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
@@ -40,12 +37,11 @@ namespace FootballInformationSystem.Data.Services
         {
             Validated.NotNull(city, nameof(city));
 
-            Dbo.City addedCategory = this.unitOfWork.Cities.Add(mapper.Map(city));
+            Dbo.City addedCity = this.unitOfWork.Cities.Add(mapper.Map(city));
 
             await this.unitOfWork.SaveChanges();
 
-            return addedCategory;
+            return addedCity;
         }
-
     }
 }

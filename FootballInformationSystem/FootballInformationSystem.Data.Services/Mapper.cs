@@ -22,5 +22,16 @@ namespace FootballInformationSystem.Data.Services
                 Name = city.Name
             };
         }
+
+        public Dbo.Country Map(Dto.Country country)
+        {
+            Validated.NotNull(country, nameof(country));
+
+            return new Dbo.Country
+            {
+                Id = country.Id,
+                Name = country.Name
+            };
+        }
     }
 }
