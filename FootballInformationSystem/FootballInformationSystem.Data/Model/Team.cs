@@ -9,23 +9,20 @@ namespace FootballInformationSystem.Data.Model
         [Key]
         public long Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
 
         public long CityId { get; set; }
 
-        [Required]
-        [ForeignKey(nameof(CityId))]
         public virtual City City { get; set; }
 
         public long CountryId { get; set; }
 
-        [Required]
-        [ForeignKey(nameof(CountryId))]
         public virtual Country Country { get; set; }
 
-        public virtual HashSet<Competition> Competitions { get; set; }
+        public virtual IList<TeamCompetition> TeamCompetitions { get; set; }
 
-        public virtual HashSet<Match> Matches { get; set; }
+        public virtual IList<Game> HomeGames { get; set; }
+
+        public virtual IList<Game> AwayGames { get; set; }
     }
 }

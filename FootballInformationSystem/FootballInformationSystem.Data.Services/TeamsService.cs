@@ -16,6 +16,8 @@ namespace FootballInformationSystem.Data.Services
         Task<Dto.Team> Create(Dto.Team team);
 
         Task<Dbo.Team> GetByName(string name);
+
+        Task<Dto.Team> Update(Dto.Team team);
     }
 
     public class TeamsService : ITeamsService
@@ -40,11 +42,41 @@ namespace FootballInformationSystem.Data.Services
 
         public async Task<IEnumerable<Dto.Team>> All()
         {
-            var teams = await this.unitOfWork.Teams.All().ToListAsync();
+            var teams = this.unitOfWork.Teams.All();
+            var cities = this.unitOfWork.Cities.All();
+            var countries = this.unitOfWork.Countries.All();
 
-            var result = mapper.Map(teams);
+            var joined = teams.Join(
+                    cities,
+                    team => team.CityId,
+                    city => city.CityId,
+                    (team, city) => new Dbo.Team
+                    {
+                        Id = team.Id,
+                        Name = team.Name,
+                        City = city,
+                        CountryId = team.CountryId,
+                    }
+                );
 
-            return result;
+            joined = teams.Join(
+                    countries,
+                    team => team.CountryId,
+                    country => country.CountryId,
+                    (team, country) => new Dbo.Team
+                    {
+                        Id = team.Id,
+                        Name = team.Name,
+                        City = team.City,
+                        Country = country,
+                    }
+                );
+
+            var result = await joined.ToListAsync();
+
+            var result1 = mapper.Map(result);
+
+            return result1;
         }
 
         public async Task<Dbo.Team> GetByName(string name)
@@ -65,7 +97,7 @@ namespace FootballInformationSystem.Data.Services
                 city = await this.cityService.Create(team.City);
             }
 
-            team.City.Id = city.Id;
+            team.City.Id = city.CityId;
 
             Dbo.Country country = await this.countryService.GetByName(team.Country.Name);
 
@@ -74,7 +106,7 @@ namespace FootballInformationSystem.Data.Services
                 country = await this.countryService.Create(team.Country);
             }
 
-            team.Country.Id = country.Id;
+            team.Country.Id = country.CountryId;
 
             Dbo.Team addedTeam = this.unitOfWork.Teams.Add(mapper.Map(team));
 
@@ -94,7 +126,7 @@ namespace FootballInformationSystem.Data.Services
                 city = await this.cityService.Create(team.City);
             }
 
-            team.City.Id = city.Id;
+            team.City.Id = city.CityId;
 
             Dbo.Country country = await this.countryService.GetByName(team.Country.Name);
 
@@ -103,7 +135,7 @@ namespace FootballInformationSystem.Data.Services
                 country = await this.countryService.Create(team.Country);
             }
 
-            team.Country.Id = country.Id;
+            team.Country.Id = country.CountryId;
 
             Dbo.Team updatedTeam = this.unitOfWork.Teams.Update(mapper.Map(team));
 

@@ -1,6 +1,7 @@
 ﻿using FootballInformationSystem.Data.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace FootballInformationSystem.Data
 
         public DbSet<Country> Countries { get; set; }
 
-        public DbSet<Match> Matches { get; set; }
+        public DbSet<Game> Games { get; set; }
 
         public DbSet<Team> Teams { get; set; }
 
@@ -45,9 +46,44 @@ namespace FootballInformationSystem.Data
 
             builder.Entity<Country>().HasQueryFilter(c => EF.Property<bool>(c, "IsDeleted") == false);
 
-            builder.Entity<Match>().HasQueryFilter(c => EF.Property<bool>(c, "IsDeleted") == false);
+            builder.Entity<Game>().HasQueryFilter(c => EF.Property<bool>(c, "IsDeleted") == false);
 
             builder.Entity<Team>().HasQueryFilter(c => EF.Property<bool>(c, "IsDeleted") == false);
+
+            builder.Entity<TeamCompetition>()
+                .HasKey(t => new { t.TeamId, t.CompetitionId });
+
+            builder.Entity<Team>()
+                .HasOne(t => t.City)
+                .WithMany(c => c.Teams)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Team>()
+                .HasOne(t => t.Country)
+                .WithMany(c => c.Teams)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<TeamCompetition>()
+                .HasOne(tc => tc.Team)
+                .WithMany(t => t.TeamCompetitions)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<TeamCompetition>()
+                .HasOne(tc => tc.Competition)
+                .WithMany(t => t.TeamCompetitions)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Game>()
+                .HasOne(g => g.HomeTeam)
+                .WithMany(t => t.HomeGames)
+                .HasForeignKey(g => g.HomeTeamId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Game>()
+                .HasOne(m => m.AwayTeam)
+                .WithMany(t => t.AwayGames)
+                .HasForeignKey(g => g.AwayTeamId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 
         private void UpdateSoftDelete()

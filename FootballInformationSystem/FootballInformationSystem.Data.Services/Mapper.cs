@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FootballInformationSystem.Data.Model;
+using System.Collections.Generic;
 using System.Linq;
 using Dbo = FootballInformationSystem.Data.Model;
 using Dto = FootballInformationSystem.Data.Services.DtoModels;
@@ -14,7 +15,7 @@ namespace FootballInformationSystem.Data.Services
         Dbo.Country Map(Dto.Country country);
 
         Dto.Country Map(Dbo.Country country);
-        
+
         Dto.Team Map(Dbo.Team team);
 
         Dbo.Team Map(Dto.Team team);
@@ -33,7 +34,7 @@ namespace FootballInformationSystem.Data.Services
 
             return new Dbo.City
             {
-                Id = city.Id,
+                CityId = city.Id,
                 Name = city.Name
             };
         }
@@ -47,7 +48,7 @@ namespace FootballInformationSystem.Data.Services
 
             var result = new Dto.City
             {
-                Id = city.Id,
+                Id = city.CityId,
                 Name = city.Name
             };
 
@@ -63,7 +64,7 @@ namespace FootballInformationSystem.Data.Services
 
             return new Dbo.Country
             {
-                Id = country.Id,
+                CountryId = country.Id,
                 Name = country.Name
             };
         }
@@ -77,7 +78,7 @@ namespace FootballInformationSystem.Data.Services
 
             return new Dto.Country
             {
-                Id = country.Id,
+                Id = country.CountryId,
                 Name = country.Name
             };
         }
@@ -112,11 +113,31 @@ namespace FootballInformationSystem.Data.Services
                 Id = team.Id,
                 Name = team.Name,
                 CityId = team.City.Id,
-                City = Map(team.City),
+ //               City = Map(team.City),
                 CountryId = team.Country.Id,
-                Country = Map(team.Country)
+ //               Country = Map(team.Country),
+                TeamCompetitions = team.Competitions.Select(competition => Map(competition, team.Id)).ToList()
             };
 
+            return result;
+        }
+
+        public Dbo.TeamCompetition Map(Dto.Competition competition, long teamId)
+        {
+            if (competition == null)
+            {
+                return null;
+            }
+
+            var result = new TeamCompetition
+            {
+                TeamId = teamId,
+                Competition = new Competition
+                {
+                    CompetitionId = competition.Id,
+                    Name = competition.Name
+                }
+            };
             return result;
         }
 

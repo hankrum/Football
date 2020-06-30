@@ -14,7 +14,7 @@ namespace FootballInformationSystem.Data
 
         DbSet<Country> Countries { get; set; }
 
-        DbSet<Match> Matches { get; set; }
+        DbSet<Game> Games { get; set; }
 
         DbSet<Team> Teams { get; set; }
 

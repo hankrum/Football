@@ -12,7 +12,7 @@ namespace FootballInformationSystem.Data.UnitOfWork
 
         IEfRepository<Country> Countries { get; }
 
-        IEfRepository<Match> Matches { get; }
+        IEfRepository<Game> Games { get; }
 
         IEfRepository<Team> Teams { get; }
 

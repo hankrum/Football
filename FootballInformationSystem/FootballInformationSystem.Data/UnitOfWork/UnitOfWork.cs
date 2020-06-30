@@ -11,7 +11,7 @@ namespace FootballInformationSystem.Data.UnitOfWork
         private readonly IEfRepository<City> cities;
         private readonly IEfRepository<Competition> competitions;
         private readonly IEfRepository<Country> countries;
-        private readonly IEfRepository<Match> matches;
+        private readonly IEfRepository<Game> games;
         private readonly IEfRepository<Team> teams;
 
         public UnitOfWork(
@@ -19,7 +19,7 @@ namespace FootballInformationSystem.Data.UnitOfWork
             IEfRepository<City> cities,
             IEfRepository<Competition> competitions,
             IEfRepository<Country> countries,
-            IEfRepository<Match> matches,
+            IEfRepository<Game> games,
             IEfRepository<Team> teams
             )
         {
@@ -27,13 +27,13 @@ namespace FootballInformationSystem.Data.UnitOfWork
             Validated.NotNull(cities, nameof(cities));
             Validated.NotNull(competitions, nameof(competitions));
             Validated.NotNull(countries, nameof(countries));
-            Validated.NotNull(matches, nameof(matches));
+            Validated.NotNull(games, nameof(games));
             Validated.NotNull(teams, nameof(teams));
             this.context = context;
             this.cities = cities;
             this.competitions = competitions;
             this.countries = countries;
-            this.matches = matches;
+            this.games = games;
             this.teams = teams;
         }
 
@@ -61,11 +61,11 @@ namespace FootballInformationSystem.Data.UnitOfWork
             }
         }
 
-        public IEfRepository<Match> Matches
+        public IEfRepository<Game> Games
         {
             get
             {
-                return this.matches;
+                return this.games;
             }
         }
 

@@ -6,9 +6,8 @@ namespace FootballInformationSystem.Data.Model
     public class City : SystemInfo
     {
         [Key]
-        public long Id { get; set; }
+        public long CityId { get; set; }
 
-        [Required]
         public string Name { get; set; }
 
         public virtual HashSet<Team> Teams { get; set; }

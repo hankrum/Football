@@ -49,7 +49,7 @@ namespace FootballInformationSystem.Api.Controllers
             {
                 team.Id = websiteResult.Id;
 
-                result = await this.teamsService.Update(webSite);
+                result = await this.teamsService.Update(team);
             }
 
             return CreatedAtAction(

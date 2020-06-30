@@ -6,14 +6,11 @@ namespace FootballInformationSystem.Data.Model
     public class Competition : SystemInfo
     {
         [Key]
-        public long Id { get; set; }
+        public long CompetitionId { get; set; }
 
 
-        [Required]
         public string Name { get; set; }
 
-        public virtual HashSet<Team> Teams { get; set; }
-
-        public virtual HashSet<Match> Matches { get; set; }
+        public virtual IList<TeamCompetition> TeamCompetitions { get; set; }
     }
 }
