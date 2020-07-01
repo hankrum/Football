@@ -58,5 +58,20 @@ namespace FootballInformationSystem.Api.Controllers
                 result
             );
         }
+
+        // DELETE: api/Team/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Team>> Delete(int id)
+        {
+            if (!await this.teamsService.Exists(id))
+            {
+                return NotFound();
+            }
+
+            var result = await this.teamsService.Delete(id);
+
+            return result;
+        }
+
     }
 }
