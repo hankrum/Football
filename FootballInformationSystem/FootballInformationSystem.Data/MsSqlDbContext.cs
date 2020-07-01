@@ -70,7 +70,7 @@ namespace FootballInformationSystem.Data
 
             builder.Entity<TeamCompetition>()
                 .HasOne(tc => tc.Competition)
-                .WithMany(t => t.TeamCompetitions)
+                .WithMany(t => t.Teams)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Game>()

@@ -46,6 +46,9 @@ namespace FootballInformationSystem.Api
             services.AddTransient<ICityService, CityService>();
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<ITeamsService, TeamsService>();
+            services.AddTransient<IGamesService, GamesService>();
+            services.AddTransient<IRankingsService, RankingsService>();
+            services.AddTransient<ICompetitionsService, CompetitionsService>();
             services.AddTransient<IMapper, Mapper>();
         }
 

@@ -11,6 +11,6 @@ namespace FootballInformationSystem.Data.Model
 
         public string Name { get; set; }
 
-        public virtual IList<TeamCompetition> TeamCompetitions { get; set; }
+        public virtual IList<TeamCompetition> Teams { get; set; }
     }
 }

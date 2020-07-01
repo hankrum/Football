@@ -1,4 +1,5 @@
-﻿using FootballInformationSystem.Data.UnitOfWork;
+﻿using FootballInformationSystem.Data.Model;
+using FootballInformationSystem.Data.UnitOfWork;
 using FootballInformationSystem.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -14,7 +15,7 @@ namespace FootballInformationSystem.Data.Services
     // TODO: Move it in a separate file
     public interface IGamesService
     {
-        Task<IEnumerable<Dto.Game>> All();
+        Task<IEnumerable<Dto.Game>> All(string teamName = null, string competitionName = null);
 
         Task<Dto.Game> Create(Dto.Game game);
 
@@ -25,9 +26,11 @@ namespace FootballInformationSystem.Data.Services
         Task<bool> Exists(long id);
 
         Task<bool> GameFinished(long id);
+
+        Task<int> getPointsInCompetition(string teamName, string competitionName);
     }
 
-    public class GamesService
+    public class GamesService : IGamesService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -47,7 +50,7 @@ namespace FootballInformationSystem.Data.Services
             this.teamsService = teamsService;
         }
 
-        public async Task<IEnumerable<Dto.Game>> All(string teamName = null)
+        public async Task<IEnumerable<Dto.Game>> All(string teamName = null, string competitionName = null)
         {
             var games = this.unitOfWork.Games.All();
             var teams = this.unitOfWork.Teams.All();
@@ -195,9 +198,9 @@ namespace FootballInformationSystem.Data.Services
             return game.GameFinished;
         }
 
-        private int GetPoints(Dbo.Game game, Dbo.Team team)
+        private int GetPoints(Dto.Game game, string teamName)
         {
-            bool teamIsHome = team.TeamId == game.HomeTeam.TeamId;
+            bool teamIsHome = teamName == game.HomeTeam.Name;
             int scored = teamIsHome ? game.HomeTeamGoals : game.AwayTeamGoals;
             int received = teamIsHome ? game.AwayTeamGoals : game.HomeTeamGoals;
             int resultPoints = scored > received ?
@@ -206,5 +209,12 @@ namespace FootballInformationSystem.Data.Services
             return resultPoints;
         }
 
+        public async Task<int> getPointsInCompetition(string teamName, string competitionName)
+        {
+            var games = await this.All(teamName, competitionName);
+            int result = games.Select(game => this.GetPoints(game, teamName)).Sum();
+
+            return result;
+        }
     }
 }

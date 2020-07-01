@@ -161,7 +161,8 @@ namespace FootballInformationSystem.Data.Services
             var result = new Dto.Competition
             {
                 Id = competition.CompetitionId,
-                Name = competition.Name
+                Name = competition.Name,
+                Teams = competition.Teams.Select(t => new Dto.Team { Id = t.TeamId, Name = t.Team.Name }).ToArray()
             };
             return result;
         }
