@@ -12,7 +12,7 @@ namespace FootballInformationSystem.Data.Services
      // TODO: Move it in a separate file
    public interface ITeamsService
     {
-        Task<IEnumerable<Dto.Team>> All();
+        Task<IEnumerable<Dto.Team>> All(string cityName = null, string countryName = null);
 
         Task<Dto.Team> Create(Dto.Team team);
 
@@ -45,9 +45,15 @@ namespace FootballInformationSystem.Data.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<Dto.Team>> All()
+        public async Task<IEnumerable<Dto.Team>> All(string cityName = null, string countryName = null)
         {
-            var teams = this.unitOfWork.Teams.All();
+            var city = await this.cityService.GetByName(cityName);
+            var country = await this.countryService.GetByName(countryName);
+
+            var teams = this.unitOfWork.Teams.All()
+                .Where(t => (cityName == null || t.CityId == city.CityId)
+                    && (countryName == null || t.CountryId == country.CountryId));
+
             var cities = this.unitOfWork.Cities.All();
             var countries = this.unitOfWork.Countries.All();
             var competitions = this.unitOfWork.Competitions.All();

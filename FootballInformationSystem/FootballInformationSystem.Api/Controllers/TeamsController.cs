@@ -22,9 +22,9 @@ namespace FootballInformationSystem.Api.Controllers
 
         // GET: api/Team
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Team>>> Get()
+        public async Task<ActionResult<IEnumerable<Team>>> Get(string cityName = null, string countryName = null)
         {
-            var result = await this.teamsService.All();
+            var result = await this.teamsService.All(cityName, countryName);
 
             if (result == null)
             {
@@ -91,6 +91,5 @@ namespace FootballInformationSystem.Api.Controllers
 
             return result;
         }
-
     }
 }
