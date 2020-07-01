@@ -47,7 +47,7 @@ namespace FootballInformationSystem.Api.Controllers
             }
             else
             {
-                team.Id = websiteResult.Id;
+                team.Id = websiteResult.TeamId;
 
                 result = await this.teamsService.Update(team);
             }

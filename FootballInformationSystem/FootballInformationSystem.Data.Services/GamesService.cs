@@ -47,60 +47,64 @@ namespace FootballInformationSystem.Data.Services
             this.teamsService = teamsService;
         }
 
-        public async Task<IEnumerable<Dto.Game>> All()
+        public async Task<IEnumerable<Dto.Game>> All(string teamName = null)
         {
             var games = this.unitOfWork.Games.All();
             var teams = this.unitOfWork.Teams.All();
             var competitions = this.unitOfWork.Competitions.All();
 
-            var joined = games.Join(
-                    competitions,
-                    game => game.CompetitionId,
-                    competition => competition.CompetitionId,
-                    (game, competition) => new Dbo.Game
-                    {
-                        GameId = game.GameId,
-                        Competition = competition,
-                        HomeTeamId = game.HomeTeamId,
-                        AwayTeamId = game.AwayTeamId,
-                        HomeTeamGoals = game.HomeTeamGoals,
-                        AwayTeamGoals = game.AwayTeamGoals,
-                        Date = game.Date,
-                        GameFinished = game.GameFinished
-                    }
-                )
-                .Join(
-                    teams,
-                    game => game.HomeTeamId,
-                    team => team.Id,
-                    (game, team) => new Dbo.Game
-                    {
-                        GameId = game.GameId,
-                        Competition = game.Competition,
-                        HomeTeam = team,
-                        AwayTeamId = game.AwayTeamId,
-                        HomeTeamGoals = game.HomeTeamGoals,
-                        AwayTeamGoals = game.AwayTeamGoals,
-                        Date = game.Date,
-                        GameFinished = game.GameFinished
-                    }
-                )
-                 .Join(
-                    teams,
-                    game => game.AwayTeamId,
-                    team => team.Id,
-                    (game, team) => new Dbo.Game
-                    {
-                        GameId = game.GameId,
-                        Competition = game.Competition,
-                        HomeTeam = game.HomeTeam,
-                        AwayTeam = team,
-                        HomeTeamGoals = game.HomeTeamGoals,
-                        AwayTeamGoals = game.AwayTeamGoals,
-                        Date = game.Date,
-                        GameFinished = game.GameFinished
-                    }
-               );
+            //var joined = games.Join(
+            //        competitions,
+            //        game => game.CompetitionId,
+            //        competition => competition.CompetitionId,
+            //        (game, competition) => new Dbo.Game
+            //        {
+            //            GameId = game.GameId,
+            //            Competition = competition,
+            //            HomeTeamId = game.HomeTeamId,
+            //            AwayTeamId = game.AwayTeamId,
+            //            HomeTeamGoals = game.HomeTeamGoals,
+            //            AwayTeamGoals = game.AwayTeamGoals,
+            //            Date = game.Date,
+            //            GameFinished = game.GameFinished
+            //        }
+            //    )
+            //    .Join(
+            //        teams,
+            //        game => game.HomeTeamId,
+            //        team => team.TeamId,
+            //        (game, team) => new Dbo.Game
+            //        {
+            //            GameId = game.GameId,
+            //            Competition = game.Competition,
+            //            HomeTeam = team,
+            //            AwayTeamId = game.AwayTeamId,
+            //            HomeTeamGoals = game.HomeTeamGoals,
+            //            AwayTeamGoals = game.AwayTeamGoals,
+            //            Date = game.Date,
+            //            GameFinished = game.GameFinished
+            //        }
+            //    )
+            //     .Join(
+            //        teams,
+            //        game => game.AwayTeamId,
+            //        team => team.TeamId,
+            //        (game, team) => new Dbo.Game
+            //        {
+            //            GameId = game.GameId,
+            //            Competition = game.Competition,
+            //            HomeTeam = game.HomeTeam,
+            //            AwayTeam = team,
+            //            HomeTeamGoals = game.HomeTeamGoals,
+            //            AwayTeamGoals = game.AwayTeamGoals,
+            //            Date = game.Date,
+            //            GameFinished = game.GameFinished
+            //        })
+            var joined = games
+                .Include(g => g.Competition)
+                .Include(g => g.HomeTeam)
+                .Include(g => g.AwayTeam)
+                .Where(g => teamName == null || g.HomeTeam.Name == teamName || g.AwayTeam.Name == teamName);
 
 
             var result = await joined.ToListAsync();
@@ -190,5 +194,17 @@ namespace FootballInformationSystem.Data.Services
             var game = await this.unitOfWork.Games.GetById(id);
             return game.GameFinished;
         }
+
+        private int GetPoints(Dbo.Game game, Dbo.Team team)
+        {
+            bool teamIsHome = team.TeamId == game.HomeTeam.TeamId;
+            int scored = teamIsHome ? game.HomeTeamGoals : game.AwayTeamGoals;
+            int received = teamIsHome ? game.AwayTeamGoals : game.HomeTeamGoals;
+            int resultPoints = scored > received ?
+                3 : scored == received ? 1 : 0;
+
+            return resultPoints;
+        }
+
     }
 }

@@ -4,14 +4,16 @@ using FootballInformationSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FootballInformationSystem.Api.Migrations
 {
     [DbContext(typeof(MsSqlDbContext))]
-    partial class MsSqlDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200701131934_TeamIdFixed")]
+    partial class TeamIdFixed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +70,12 @@ namespace FootballInformationSystem.Api.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("TeamId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("CompetitionId");
+
+                    b.HasIndex("TeamId");
 
                     b.ToTable("Competitions");
                 });
@@ -215,6 +222,13 @@ namespace FootballInformationSystem.Api.Migrations
                     b.ToTable("TeamCompetition");
                 });
 
+            modelBuilder.Entity("FootballInformationSystem.Data.Model.Competition", b =>
+                {
+                    b.HasOne("FootballInformationSystem.Data.Model.Team", null)
+                        .WithMany("Competitions")
+                        .HasForeignKey("TeamId");
+                });
+
             modelBuilder.Entity("FootballInformationSystem.Data.Model.Game", b =>
                 {
                     b.HasOne("FootballInformationSystem.Data.Model.Team", "AwayTeam")
@@ -258,7 +272,7 @@ namespace FootballInformationSystem.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("FootballInformationSystem.Data.Model.Team", "Team")
-                        .WithMany("Competitions")
+                        .WithMany("TeamCompetitions")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();

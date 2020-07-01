@@ -1,5 +1,4 @@
-﻿using FootballInformationSystem.Data.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Dbo = FootballInformationSystem.Data.Model;
@@ -104,10 +103,11 @@ namespace FootballInformationSystem.Data.Services
 
             var result = new Dto.Team
             {
-                Id = team.Id,
+                Id = team.TeamId,
                 Name = team.Name,
                 City = Map(team.City),
-                Country = Map(team.Country)
+                Country = Map(team.Country),
+                Competitions = team.Competitions.Select(c => Map(c.Competition)).ToArray()
             };
 
             return result;
@@ -122,13 +122,11 @@ namespace FootballInformationSystem.Data.Services
 
             var result = new Dbo.Team
             {
-                Id = team.Id,
+                TeamId = team.Id,
                 Name = team.Name,
                 CityId = team.City.Id,
- //               City = Map(team.City),
                 CountryId = team.Country.Id,
- //               Country = Map(team.Country),
-                TeamCompetitions = team.Competitions.Select(competition => Map(competition, team.Id)).ToList()
+                Competitions = team.Competitions.Select(competition => Map(competition, team.Id)).ToList()
             };
 
             return result;
@@ -141,10 +139,10 @@ namespace FootballInformationSystem.Data.Services
                 return null;
             }
 
-            var result = new TeamCompetition
+            var result = new Dbo.TeamCompetition
             {
                 TeamId = teamId,
-                Competition = new Competition
+                Competition = new Dbo.Competition
                 {
                     CompetitionId = competition.Id,
                     Name = competition.Name

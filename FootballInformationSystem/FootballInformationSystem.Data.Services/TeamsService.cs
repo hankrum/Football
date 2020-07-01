@@ -58,30 +58,11 @@ namespace FootballInformationSystem.Data.Services
             var countries = this.unitOfWork.Countries.All();
             var competitions = this.unitOfWork.Competitions.All();
 
-            var joined = teams.Join(
-                    cities,
-                    team => team.CityId,
-                    city => city.CityId,
-                    (team, city) => new Dbo.Team
-                    {
-                        Id = team.Id,
-                        Name = team.Name,
-                        City = city,
-                        CountryId = team.CountryId,
-                    }
-                )
-                .Join(
-                    countries,
-                    team => team.CountryId,
-                    country => country.CountryId,
-                    (team, country) => new Dbo.Team
-                    {
-                        Id = team.Id,
-                        Name = team.Name,
-                        City = team.City,
-                        Country = country,
-                    }
-                );
+            var joined = teams
+                .Include(t => t.City)
+                .Include(t => t.Country)
+                .Include(t => t.Competitions)
+                .ThenInclude(c => c.Competition);
 
             var result = await joined.ToListAsync();
 
@@ -168,7 +149,7 @@ namespace FootballInformationSystem.Data.Services
         public async Task<bool> Exists(long id)
         {
             var team = await this.unitOfWork.Teams.GetById(id);
-            return team != null && team.Id == id;
+            return team != null && team.TeamId == id;
         }
     }
 }

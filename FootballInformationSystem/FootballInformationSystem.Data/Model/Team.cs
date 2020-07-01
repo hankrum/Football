@@ -7,7 +7,7 @@ namespace FootballInformationSystem.Data.Model
     public class Team : SystemInfo
     {
         [Key]
-        public long Id { get; set; }
+        public long TeamId { get; set; }
 
         public string Name { get; set; }
 
@@ -19,7 +19,7 @@ namespace FootballInformationSystem.Data.Model
 
         public virtual Country Country { get; set; }
 
-        public virtual IList<TeamCompetition> TeamCompetitions { get; set; }
+        public virtual IList<TeamCompetition> Competitions { get; set; }
 
         public virtual IList<Game> HomeGames { get; set; }
 
