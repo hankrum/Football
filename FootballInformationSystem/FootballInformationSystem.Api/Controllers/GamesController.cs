@@ -39,6 +39,11 @@ namespace FootballInformationSystem.Api.Controllers
                 return NoContent();
             }
 
+            if (this.gamesService.Exists(game))
+            {
+                return Problem("Game exists");
+            }
+
             Game result = await this.gamesService.Create(game);
 
             return CreatedAtAction(

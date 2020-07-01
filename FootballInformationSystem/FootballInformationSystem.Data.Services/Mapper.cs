@@ -113,6 +113,22 @@ namespace FootballInformationSystem.Data.Services
             return result;
         }
 
+        private Dto.Team ShortMap(Dbo.Team team)
+        {
+            if (team == null)
+            {
+                return null;
+            }
+
+            var result = new Dto.Team
+            {
+                Id = team.TeamId,
+                Name = team.Name,
+            };
+
+            return result;
+        }
+
         public Dbo.Team Map(Dto.Team team)
         {
             if (team == null)
@@ -167,6 +183,21 @@ namespace FootballInformationSystem.Data.Services
             return result;
         }
 
+        private Dto.Competition ShortMap(Dbo.Competition competition)
+        {
+            if (competition == null)
+            {
+                return null;
+            }
+
+            var result = new Dto.Competition
+            {
+                Id = competition.CompetitionId,
+                Name = competition.Name,
+            };
+            return result;
+        }
+
         public Dbo.Competition Map(Dto.Competition competition)
         {
             if (competition == null)
@@ -204,9 +235,9 @@ namespace FootballInformationSystem.Data.Services
             var result = new Dto.Game
             {
                 Id = game.GameId,
-                Competition = Map(game.Competition),
-                HomeTeam = Map(game.HomeTeam),
-                AwayTeam = Map(game.AwayTeam),
+                Competition = ShortMap(game.Competition),
+                HomeTeam = ShortMap(game.HomeTeam),
+                AwayTeam = ShortMap(game.AwayTeam),
                 HomeTeamGoals = game.HomeTeamGoals,
                 AwayTeamGoals = game.AwayTeamGoals,
                 Date = game.Date,
@@ -226,9 +257,9 @@ namespace FootballInformationSystem.Data.Services
             var result = new Dbo.Game
             {
                 GameId = game.Id,
-                Competition = Map(game.Competition),
-                HomeTeam = Map(game.HomeTeam),
-                AwayTeam = Map(game.AwayTeam),
+                CompetitionId = game.Competition.Id,
+                HomeTeamId = game.HomeTeam.Id,
+                AwayTeamId = game.AwayTeam.Id,
                 HomeTeamGoals = game.HomeTeamGoals,
                 AwayTeamGoals = game.AwayTeamGoals,
                 Date = game.Date,

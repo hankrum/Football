@@ -25,6 +25,8 @@ namespace FootballInformationSystem.Data.Services
 
         Task<bool> Exists(long id);
 
+        bool Exists(Dto.Game game);
+
         Task<bool> GameFinished(long id);
 
         Task<int> getPointsInCompetition(string teamName, string competitionName);
@@ -56,59 +58,11 @@ namespace FootballInformationSystem.Data.Services
             var teams = this.unitOfWork.Teams.All();
             var competitions = this.unitOfWork.Competitions.All();
 
-            //var joined = games.Join(
-            //        competitions,
-            //        game => game.CompetitionId,
-            //        competition => competition.CompetitionId,
-            //        (game, competition) => new Dbo.Game
-            //        {
-            //            GameId = game.GameId,
-            //            Competition = competition,
-            //            HomeTeamId = game.HomeTeamId,
-            //            AwayTeamId = game.AwayTeamId,
-            //            HomeTeamGoals = game.HomeTeamGoals,
-            //            AwayTeamGoals = game.AwayTeamGoals,
-            //            Date = game.Date,
-            //            GameFinished = game.GameFinished
-            //        }
-            //    )
-            //    .Join(
-            //        teams,
-            //        game => game.HomeTeamId,
-            //        team => team.TeamId,
-            //        (game, team) => new Dbo.Game
-            //        {
-            //            GameId = game.GameId,
-            //            Competition = game.Competition,
-            //            HomeTeam = team,
-            //            AwayTeamId = game.AwayTeamId,
-            //            HomeTeamGoals = game.HomeTeamGoals,
-            //            AwayTeamGoals = game.AwayTeamGoals,
-            //            Date = game.Date,
-            //            GameFinished = game.GameFinished
-            //        }
-            //    )
-            //     .Join(
-            //        teams,
-            //        game => game.AwayTeamId,
-            //        team => team.TeamId,
-            //        (game, team) => new Dbo.Game
-            //        {
-            //            GameId = game.GameId,
-            //            Competition = game.Competition,
-            //            HomeTeam = game.HomeTeam,
-            //            AwayTeam = team,
-            //            HomeTeamGoals = game.HomeTeamGoals,
-            //            AwayTeamGoals = game.AwayTeamGoals,
-            //            Date = game.Date,
-            //            GameFinished = game.GameFinished
-            //        })
             var joined = games
                 .Include(g => g.Competition)
                 .Include(g => g.HomeTeam)
                 .Include(g => g.AwayTeam)
                 .Where(g => teamName == null || g.HomeTeam.Name == teamName || g.AwayTeam.Name == teamName);
-
 
             var result = await joined.ToListAsync();
 
@@ -141,10 +95,11 @@ namespace FootballInformationSystem.Data.Services
 
             Dbo.Game addedGame = this.unitOfWork.Games.Add(mapper.Map(game));
 
-
             await this.unitOfWork.SaveChanges();
 
-            return mapper.Map(addedGame);
+            var result = mapper.Map(addedGame);
+
+            return result;
         }
 
         public async Task<Dto.Game> Update(Dto.Game game)
@@ -173,7 +128,9 @@ namespace FootballInformationSystem.Data.Services
 
             await this.unitOfWork.SaveChanges();
 
-            return mapper.Map(updatedGame);
+            var result = mapper.Map(updatedGame);
+
+            return result;
         }
 
         public async Task<Dto.Game> Delete(long id)
@@ -181,15 +138,27 @@ namespace FootballInformationSystem.Data.Services
             var model = await this.unitOfWork.Games.GetById(id);
             Dbo.Game deletedGame = this.unitOfWork.Games.Delete(model);
 
+            var result = mapper.Map(deletedGame);
+
             await this.unitOfWork.SaveChanges();
 
-            return mapper.Map(deletedGame);
+            return result;
         }
 
         public async Task<bool> Exists(long id)
         {
             var game = await this.unitOfWork.Games.GetById(id);
             return game != null && game.GameId == id;
+        }
+
+        public bool Exists(Dto.Game game)
+        {
+            bool gameExists = this.unitOfWork.Games.All()
+                .Any(g => g.HomeTeamId == game.HomeTeam.Id 
+                    && g.AwayTeamId == game.AwayTeam.Id
+                    && g.Date == game.Date
+                    && g.CompetitionId == game.Competition.Id);
+            return gameExists;
         }
 
         public async Task<bool> GameFinished(long id)

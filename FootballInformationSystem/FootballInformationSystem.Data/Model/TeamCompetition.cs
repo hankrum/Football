@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-
-namespace FootballInformationSystem.Data.Model
+﻿namespace FootballInformationSystem.Data.Model
 {
     public class TeamCompetition : SystemInfo
     {
