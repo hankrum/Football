@@ -1,11 +1,13 @@
 ﻿using FootballInformationSystem.Data.Model;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Dbo = FootballInformationSystem.Data.Model;
 using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
+    // TODO: Move it in a separate file
     public interface IMapper
     {
         Dbo.City Map(Dto.City city);
@@ -20,7 +22,17 @@ namespace FootballInformationSystem.Data.Services
 
         Dbo.Team Map(Dto.Team team);
 
+        Dto.Game Map(Dbo.Game game);
+
+        Dbo.Game Map(Dto.Game game);
+
+        Dbo.Competition Map(Dto.Competition competition);
+
+        Dto.Competition Map(Dbo.Competition competition);
+
         IEnumerable<Dto.Team> Map(IList<Dbo.Team> teams);
+
+        IEnumerable<Dto.Game> Map(IList<Dbo.Game> games);
     }
 
     public class Mapper : IMapper
@@ -141,6 +153,36 @@ namespace FootballInformationSystem.Data.Services
             return result;
         }
 
+        public Dto.Competition Map(Dbo.Competition competition)
+        {
+            if (competition == null)
+            {
+                return null;
+            }
+
+            var result = new Dto.Competition
+            {
+                Id = competition.CompetitionId,
+                Name = competition.Name
+            };
+            return result;
+        }
+
+        public Dbo.Competition Map(Dto.Competition competition)
+        {
+            if (competition == null)
+            {
+                return null;
+            }
+
+            var result = new Dbo.Competition
+            {
+                CompetitionId = competition.Id,
+                Name = competition.Name
+            };
+            return result;
+        }
+
         public IEnumerable<Dto.Team> Map(IList<Dbo.Team> teams)
         {
             if (teams == null)
@@ -149,6 +191,62 @@ namespace FootballInformationSystem.Data.Services
             }
 
             var result = teams.Select(team => Map(team));
+
+            return result;
+        }
+
+        public Dto.Game Map(Dbo.Game game)
+        {
+            if (game == null)
+            {
+                return null;
+            }
+
+            var result = new Dto.Game
+            {
+                Id = game.GameId,
+                Competition = Map(game.Competition),
+                HomeTeam = Map(game.HomeTeam),
+                AwayTeam = Map(game.AwayTeam),
+                HomeTeamGoals = game.HomeTeamGoals,
+                AwayTeamGoals = game.AwayTeamGoals,
+                Date = game.Date,
+                MatchFinished = game.MatchFinished
+            };
+
+            return result;
+        }
+
+        public Dbo.Game Map(Dto.Game game)
+        {
+            if (game == null)
+            {
+                return null;
+            }
+
+            var result = new Dbo.Game
+            {
+                GameId = game.Id,
+                Competition = Map(game.Competition),
+                HomeTeam = Map(game.HomeTeam),
+                AwayTeam = Map(game.AwayTeam),
+                HomeTeamGoals = game.HomeTeamGoals,
+                AwayTeamGoals = game.AwayTeamGoals,
+                Date = game.Date,
+                MatchFinished = game.MatchFinished
+            };
+
+            return result;
+        }
+
+        public IEnumerable<Dto.Game> Map(IList<Dbo.Game> games)
+        {
+            if (games == null)
+            {
+                return null;
+            }
+
+            var result = games.Select(game => Map(game));
 
             return result;
         }

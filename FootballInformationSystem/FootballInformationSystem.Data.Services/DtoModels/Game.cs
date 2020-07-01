@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FootballInformationSystem.Data.Services.DtoModels
 {
-    public class Match
+    public class Game
     {
         public long Id { get; set; }
 
@@ -12,12 +12,14 @@ namespace FootballInformationSystem.Data.Services.DtoModels
 
         public Team HomeTeam { get; set; }
 
-        public Team GuestTeam { get; set; }
+        public Team AwayTeam { get; set; }
 
         public int HomeTeamGoals { get; set; }
 
-        public int GuestTeamGoals { get; set; }
+        public int AwayTeamGoals { get; set; }
 
         public DateTime Date { get; set; }
+
+        public bool MatchFinished { get; set; }
     }
 }

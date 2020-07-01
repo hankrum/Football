@@ -9,7 +9,8 @@ using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
-    public interface ITeamsService
+     // TODO: Move it in a separate file
+   public interface ITeamsService
     {
         Task<IEnumerable<Dto.Team>> All();
 
@@ -18,6 +19,10 @@ namespace FootballInformationSystem.Data.Services
         Task<Dbo.Team> GetByName(string name);
 
         Task<Dto.Team> Update(Dto.Team team);
+
+        Task<Dto.Team> Delete(long id);
+        
+        Task<bool> Exists(long id);
     }
 
     public class TeamsService : ITeamsService
@@ -45,6 +50,7 @@ namespace FootballInformationSystem.Data.Services
             var teams = this.unitOfWork.Teams.All();
             var cities = this.unitOfWork.Cities.All();
             var countries = this.unitOfWork.Countries.All();
+            var competitions = this.unitOfWork.Competitions.All();
 
             var joined = teams.Join(
                     cities,
@@ -57,9 +63,8 @@ namespace FootballInformationSystem.Data.Services
                         City = city,
                         CountryId = team.CountryId,
                     }
-                );
-
-            joined = teams.Join(
+                )
+                .Join(
                     countries,
                     team => team.CountryId,
                     country => country.CountryId,
@@ -74,9 +79,9 @@ namespace FootballInformationSystem.Data.Services
 
             var result = await joined.ToListAsync();
 
-            var result1 = mapper.Map(result);
+            var mapped = mapper.Map(result);
 
-            return result1;
+            return mapped;
         }
 
         public async Task<Dbo.Team> GetByName(string name)
@@ -142,6 +147,22 @@ namespace FootballInformationSystem.Data.Services
             await this.unitOfWork.SaveChanges();
 
             return mapper.Map(updatedTeam);
+        }
+
+        public async Task<Dto.Team> Delete(long id)
+        {
+            var model = await this.unitOfWork.Teams.GetById(id);
+            Dbo.Team deletedTeam = this.unitOfWork.Teams.Delete(model);
+
+            await this.unitOfWork.SaveChanges();
+
+            return mapper.Map(deletedTeam);
+        }
+
+        public async Task<bool> Exists(long id)
+        {
+            var team = await this.unitOfWork.Teams.GetById(id);
+            return team != null && team.Id == id;
         }
     }
 }
