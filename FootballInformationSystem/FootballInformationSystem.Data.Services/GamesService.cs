@@ -1,15 +1,13 @@
 ﻿using FootballInformationSystem.Data.UnitOfWork;
-using Dbo = FootballInformationSystem.Data.Model;
-using Dto = FootballInformationSystem.Data.Services.DtoModels;
+using FootballInformationSystem.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Internal;
-using FootballInformationSystem.Data.Model;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using FootballInformationSystem.Infrastructure;
+using System.Threading.Tasks;
+using Dbo = FootballInformationSystem.Data.Model;
+using Dto = FootballInformationSystem.Data.Services.DtoModels;
 
 namespace FootballInformationSystem.Data.Services
 {
@@ -17,6 +15,16 @@ namespace FootballInformationSystem.Data.Services
     public interface IGamesService
     {
         Task<IEnumerable<Dto.Game>> All();
+
+        Task<Dto.Game> Create(Dto.Game game);
+
+        Task<Dto.Game> Update(Dto.Game game);
+
+        Task<Dto.Game> Delete(long id);
+
+        Task<bool> Exists(long id);
+
+        Task<bool> GameFinished(long id);
     }
 
     public class GamesService
@@ -58,7 +66,7 @@ namespace FootballInformationSystem.Data.Services
                         HomeTeamGoals = game.HomeTeamGoals,
                         AwayTeamGoals = game.AwayTeamGoals,
                         Date = game.Date,
-                        MatchFinished = game.MatchFinished
+                        GameFinished = game.GameFinished
                     }
                 )
                 .Join(
@@ -74,7 +82,7 @@ namespace FootballInformationSystem.Data.Services
                         HomeTeamGoals = game.HomeTeamGoals,
                         AwayTeamGoals = game.AwayTeamGoals,
                         Date = game.Date,
-                        MatchFinished = game.MatchFinished
+                        GameFinished = game.GameFinished
                     }
                 )
                  .Join(
@@ -90,7 +98,7 @@ namespace FootballInformationSystem.Data.Services
                         HomeTeamGoals = game.HomeTeamGoals,
                         AwayTeamGoals = game.AwayTeamGoals,
                         Date = game.Date,
-                        MatchFinished = game.MatchFinished
+                        GameFinished = game.GameFinished
                     }
                );
 
@@ -132,6 +140,35 @@ namespace FootballInformationSystem.Data.Services
             return mapper.Map(addedGame);
         }
 
+        public async Task<Dto.Game> Update(Dto.Game game)
+        {
+            Validated.NotNull(game, nameof(game));
+
+            bool competitionExists = await this.competitionsService.Exists(game.Competition.Id);
+            if (!competitionExists)
+            {
+                throw new ArgumentException("No competition");
+            }
+
+            bool homeTeamExists = await this.teamsService.Exists(game.HomeTeam.Id);
+            if (!homeTeamExists)
+            {
+                throw new ArgumentException("No home team");
+            }
+
+            bool awayTeamExists = await this.teamsService.Exists(game.AwayTeam.Id);
+            if (!awayTeamExists)
+            {
+                throw new ArgumentException("No away team");
+            }
+
+            Dbo.Game updatedGame = this.unitOfWork.Games.Update(mapper.Map(game));
+
+            await this.unitOfWork.SaveChanges();
+
+            return mapper.Map(updatedGame);
+        }
+
         public async Task<Dto.Game> Delete(long id)
         {
             var model = await this.unitOfWork.Games.GetById(id);
@@ -142,5 +179,16 @@ namespace FootballInformationSystem.Data.Services
             return mapper.Map(deletedGame);
         }
 
+        public async Task<bool> Exists(long id)
+        {
+            var game = await this.unitOfWork.Games.GetById(id);
+            return game != null && game.GameId == id;
+        }
+
+        public async Task<bool> GameFinished(long id)
+        {
+            var game = await this.unitOfWork.Games.GetById(id);
+            return game.GameFinished;
+        }
     }
 }

@@ -59,6 +59,25 @@ namespace FootballInformationSystem.Api.Controllers
             );
         }
 
+        // PUT: api/Team/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Team>> Put(long id, [FromBody] Team team)
+        {
+            if (id != team.Id)
+            {
+                return BadRequest();
+            }
+
+            if (!await this.teamsService.Exists(id))
+            {
+                return NotFound();
+            }
+
+            var result = await this.teamsService.Update(team);
+
+            return result;
+        }
+
         // DELETE: api/Team/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Team>> Delete(int id)

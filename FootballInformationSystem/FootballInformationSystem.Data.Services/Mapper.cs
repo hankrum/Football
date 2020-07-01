@@ -211,7 +211,7 @@ namespace FootballInformationSystem.Data.Services
                 HomeTeamGoals = game.HomeTeamGoals,
                 AwayTeamGoals = game.AwayTeamGoals,
                 Date = game.Date,
-                MatchFinished = game.MatchFinished
+                MatchFinished = game.GameFinished
             };
 
             return result;
@@ -233,7 +233,7 @@ namespace FootballInformationSystem.Data.Services
                 HomeTeamGoals = game.HomeTeamGoals,
                 AwayTeamGoals = game.AwayTeamGoals,
                 Date = game.Date,
-                MatchFinished = game.MatchFinished
+                GameFinished = game.MatchFinished
             };
 
             return result;

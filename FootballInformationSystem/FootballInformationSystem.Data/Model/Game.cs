@@ -30,6 +30,6 @@ namespace FootballInformationSystem.Data.Model
 
         public DateTime Date { get; set; }
 
-        public Boolean MatchFinished { get; set; }
+        public Boolean GameFinished { get; set; }
     }
 }
