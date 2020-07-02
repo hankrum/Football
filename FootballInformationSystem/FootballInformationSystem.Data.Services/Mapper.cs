@@ -158,11 +158,12 @@ namespace FootballInformationSystem.Data.Services
             var result = new Dbo.TeamCompetition
             {
                 TeamId = teamId,
-                Competition = new Dbo.Competition
+                CompetitionId = competition.Id,
+                Competition = competition.Id == 0 ? new Dbo.Competition
                 {
                     CompetitionId = competition.Id,
                     Name = competition.Name
-                }
+                } : null
             };
             return result;
         }

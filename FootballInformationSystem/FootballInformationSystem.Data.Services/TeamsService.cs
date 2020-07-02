@@ -30,18 +30,21 @@ namespace FootballInformationSystem.Data.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly ICityService cityService;
         private readonly ICountryService countryService;
+        private readonly ICompetitionsService competitionsService;
         private readonly IMapper mapper;
 
         public TeamsService(
             IUnitOfWork unitOfWork,
             ICityService cityService,
             ICountryService countryService,
+            ICompetitionsService competitionsService,
             IMapper mapper
             )
         {
             this.unitOfWork = unitOfWork;
             this.cityService = cityService;
             this.countryService = countryService;
+            this.competitionsService = competitionsService;
             this.mapper = mapper;
         }
 
@@ -97,6 +100,14 @@ namespace FootballInformationSystem.Data.Services
             {
                 country = await this.countryService.Create(team.Country);
             }
+
+            // fill in competition ids where existing to avoid duplication of competitions
+            team.Competitions = (await Task.WhenAll(team.Competitions.Select(async (competition) =>
+            {
+                var existing = await this.competitionsService.GetByName(competition.Name);
+                competition.Id = existing != null ? existing.CompetitionId : 0;
+                return competition;
+            }))).ToArray();
 
             team.Country.Id = country.CountryId;
 

@@ -38,16 +38,23 @@ namespace FootballInformationSystem.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Team>> Post([FromBody] Team team)
         {
-            var websiteResult = await this.teamsService.GetByName(team.Name);
+            string empty = string.Empty;
+
+            if (team == null || team.Name == empty || team.City.Name == empty || team.Country.Name == empty || team.Competitions.Any(c => c.Name == empty))
+            {
+                return Problem("Not valid");
+            }
+
+            var teamResult = await this.teamsService.GetByName(team.Name);
 
             Team result;
-            if (websiteResult == null)
+            if (teamResult == null)
             {
                 result = await this.teamsService.Create(team);
             }
             else
             {
-                team.Id = websiteResult.TeamId;
+                team.Id = teamResult.TeamId;
 
                 result = await this.teamsService.Update(team);
             }
