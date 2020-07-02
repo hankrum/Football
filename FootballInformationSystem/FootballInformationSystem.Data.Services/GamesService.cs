@@ -1,5 +1,4 @@
-﻿using FootballInformationSystem.Data.Model;
-using FootballInformationSystem.Data.UnitOfWork;
+﻿using FootballInformationSystem.Data.UnitOfWork;
 using FootballInformationSystem.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;

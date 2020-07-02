@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FootballInformationSystem.Data.Services.DtoModels
+﻿namespace FootballInformationSystem.Data.Services.DtoModels
 {
     public class Team
     {
